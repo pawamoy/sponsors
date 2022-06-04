@@ -37,7 +37,7 @@ def push_update(payload):
     with tempfile.TemporaryDirectory() as tmpdir:
         logger.debug("Preparing SSH key and setting up git")
         tmpkey_path = Path(tmpdir, "deploy_key")
-        tmpkey_path.write_text(DEPLOY_KEY.strip())
+        tmpkey_path.write_text(DEPLOY_KEY + "\n")
         ssh_cmd = f"ssh -i {tmpkey_path} -oIdentitiesOnly=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null"
         os.environ["GIT_SSH_COMMAND"] = ssh_cmd
 
