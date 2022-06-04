@@ -6,7 +6,7 @@ import tempfile
 from pathlib import Path
 from subprocess import run
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from loguru import logger
 
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET")
@@ -16,23 +16,21 @@ app = FastAPI()
 
 
 def is_valid_signature(secret, payload, their_hash):
-    payload_bytes = json.dumps(payload).encode("utf8")
-    our_hash = hmac.new(secret.encode("utf8"), payload_bytes, hashlib.sha256).hexdigest()
+    our_hash = hmac.new(secret.encode("utf8"), payload, hashlib.sha256).hexdigest()
     logger.debug(f"Our computed hash: {our_hash}")
     logger.debug(f"GitHub's hash: {their_hash}")
-    return hmac.compare_digest(our_hash, their_hash)
+    return hmac.compare_digest(our_hash, their_hash.replace("sha256=", ""))
 
 
 @app.post("/")
 async def handle_webhook(request: Request):
-    payload_hash = request.headers["X-Hub-Signature-256"][7:]  # remove leading sha256=
-    payload_data = await request.json()
-    logger.debug(f"Payload data: {payload_data}")
+    payload_data = await request.body()
+    payload_hash = request.headers["X-Hub-Signature-256"]
     if not is_valid_signature(WEBHOOK_SECRET, payload_data, payload_hash):
         logger.error("Invalid payload hash")
-        return "Invalid payload hash", 400
+        raise HTTPException(status_code=400, detail="Invalid payload hash.")
     
-    push_update(payload_data)
+    push_update(await request.json())
 
 
 def push_update(payload):
