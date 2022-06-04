@@ -1,0 +1,21 @@
+{
+  "name": "Sponsors Webhook",
+  "description": "Receive sponsors webhook, trigger GHA pipeline.",
+  "image": "heroku/python",
+  "repository": "https://github.com/pawamoy/sponsors",
+  "keywords": ["python", "fastapi"],
+  "addons": [],
+  "env": {
+    "WEBHOOK_SECRET": {
+      "description": "The webhook secret.",
+      "generator": "secret"
+    }
+  },
+  "environments": {
+    "test": {
+      "scripts": {
+        "test": "python -c 'print(\"ok\")'"
+      }
+    }
+  }
+}
