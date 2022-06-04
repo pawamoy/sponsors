@@ -22,6 +22,12 @@ def is_valid_signature(secret, payload, their_hash):
     return hmac.compare_digest(our_hash, their_hash.replace("sha256=", ""))
 
 
+@app.on_event("startup")
+async def startup():
+    run(["git", "config", "--global", "user.email", "pawamoy@pm.me"])
+    run(["git", "config", "--global", "user.name", "Timothée Mazzucotelli"])
+
+
 @app.post("/")
 async def handle_webhook(request: Request):
     payload_data = await request.body()
