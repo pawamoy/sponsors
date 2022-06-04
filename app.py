@@ -6,8 +6,8 @@ import tempfile
 from pathlib import Path
 from subprocess import run
 
-import httpx
 from fastapi import FastAPI, Request
+from loguru import logger
 
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET")
 DEPLOY_KEY = os.getenv("DEPLOY_KEY")
@@ -26,6 +26,7 @@ async def trigger_workflow(request: Request):
     payload_hash = request.headers["X-Hub-Signature-256"][7:]  # remove leading sha256=
     payload_data = await request.json()
     if not is_valid_signature(WEBHOOK_SECRET, payload_data, payload_hash):
+        logger.error("Invalid payload hash")
         return "Invalid payload hash", 400
     
     push_update(payload_data)
@@ -33,26 +34,26 @@ async def trigger_workflow(request: Request):
 
 def push_update(payload):
     with tempfile.TemporaryDirectory() as tmpdir:
-        # prepare SSH key and setup git to use it
+        logger.debug("Preparing SSH key and setting up git")
         tmpkey_path = Path(tmpdir, "deploy_key")
         tmpkey_path.write_text(DEPLOY_KEY)
         ssh_cmd = f"ssh -i {tmpkey_path} -oIdentitiesOnly=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null"
         os.environ["GIT_SSH_COMMAND"] = ssh_cmd
 
-        # clone repository
+        logger.debug("Cloning repository")
         repo_dir = Path(tmpdir, "sponsors")
         run(["git", "clone", "git@github.com:pawamoy/sponsors", str(repo_dir)])
 
-        # append payload to history
+        logger.debug("Updating history")
         history_file = repo_dir / "history.json"
         history = json.loads(history_file.read_text())
         history.append(payload)
         history_file.write_text(json.dumps(history))
 
-        # replace previous payload with current
+        logger.debug("Updating current payload")
         payload_file = repo_dir / "payload.json"
         payload_file.write_text(json.dumps(payload))
 
-        # commit and push
+        logger.debug("Committing and pushing")
         run(["git", "-C", str(repo_dir), "commit", "-am", "sponsors update"])
         run(["git", "-C", str(repo_dir), "push"])
