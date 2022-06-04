@@ -18,13 +18,16 @@ app = FastAPI()
 def is_valid_signature(secret, payload, their_hash):
     payload_bytes = json.dumps(payload).encode("utf8")
     our_hash = hmac.new(secret.encode("utf8"), payload_bytes, hashlib.sha256).hexdigest()
+    logger.debug(f"Our computed hash: {our_hash}")
+    logger.debug(f"GitHub's hash: {their_hash}")
     return hmac.compare_digest(our_hash, their_hash)
 
 
 @app.post("/")
-async def trigger_workflow(request: Request):
+async def handle_webhook(request: Request):
     payload_hash = request.headers["X-Hub-Signature-256"][7:]  # remove leading sha256=
     payload_data = await request.json()
+    logger.debug(f"Payload data: {payload_data}")
     if not is_valid_signature(WEBHOOK_SECRET, payload_data, payload_hash):
         logger.error("Invalid payload hash")
         return "Invalid payload hash", 400
