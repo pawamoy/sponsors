@@ -6,6 +6,10 @@
   "keywords": ["python", "fastapi"],
   "addons": [],
   "env": {
+    "DEPLOY_KEY": {
+      "description": "The deploy key.",
+      "generator": "secret"
+    },
     "WEBHOOK_SECRET": {
       "description": "The webhook secret.",
       "generator": "secret"
