@@ -43,7 +43,7 @@ def push_update(payload):
 
         logger.debug("Cloning repository")
         repo_dir = Path(tmpdir, "sponsors")
-        run(["git", "clone", "git@github.com:pawamoy/sponsors", str(repo_dir)], check=True)
+        run(["git", "clone", "ssh://git@github.com:pawamoy/sponsors", str(repo_dir)], check=True)
 
         logger.debug("Updating history")
         history_file = repo_dir / "history.json"
