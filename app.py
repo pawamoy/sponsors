@@ -24,8 +24,9 @@ def is_valid_signature(secret, payload, their_hash):
 
 @app.on_event("startup")
 async def startup():
-    run(["git", "config", "--global", "user.email", "pawamoy@pm.me"])
-    run(["git", "config", "--global", "user.name", "Timothée Mazzucotelli"])
+    logger.debug("Setting up git")
+    run(["git", "config", "--global", "user.email", "pawamoy@pm.me"], check=True)
+    run(["git", "config", "--global", "user.name", "Timothée Mazzucotelli"], check=True)
 
 
 @app.post("/")
@@ -41,7 +42,7 @@ async def handle_webhook(request: Request):
 
 def push_update(payload):
     with tempfile.TemporaryDirectory() as tmpdir:
-        logger.debug("Preparing SSH key and setting up git")
+        logger.debug("Preparing SSH key")
         tmpkey_path = Path(tmpdir, "deploy_key")
         tmpkey_path.write_text(DEPLOY_KEY + "\n")
         ssh_cmd = f"ssh -i {tmpkey_path} -oIdentitiesOnly=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null"
