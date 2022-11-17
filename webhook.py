@@ -60,7 +60,7 @@ def push_update(payload):
 
         logger.debug("Updating current payload")
         payload_file = repo_dir / "payload.json"
-        payload_file.write_text(json.dumps(payload))
+        payload_file.write_text(json.dumps(payload, indent=2))
 
         logger.debug("Committing and pushing")
         run(["git", "-C", str(repo_dir), "commit", "-am", "sponsors update"], check=True)

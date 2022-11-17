@@ -1,13 +1,21 @@
-# Python: Getting Started
+# Sponsors management system for mkdocstrings
 
-A barebones Django app, which can easily be deployed to Heroku.
+This system is composed of a webhook handler
+and two GitHub workflows (pipelines).
 
-This application supports the [Getting Started with Python on Heroku](https://devcenter.heroku.com/articles/getting-started-with-python) article - check it out for instructions on how to deploy this app to Heroku and also run it locally.
+The webhook handler is a FastAPI app, deployed on Heroku,
+that receives event payloads emitted by GitHub
+when users subscribe to, or cancel, sponsor tiers
+on my own account (@pawamoy). It verifies
+the integrity of the event payload and uses
+git to push the payload onto this very same repository.
 
-Alternatively, you can deploy it using this Heroku Button:
+Pushing a commit triggers the insiders workflow,
+which reads the updated event payload to grant/revoke
+access to/from the private repositories of the organization.
+It does so by adding/removing users from the insiders team,
+which itself grants access to several repositories.
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-
-For more information about using Python on Heroku, see these Dev Center articles:
-
-- [Python on Heroku](https://devcenter.heroku.com/categories/python)
+The second workflow is scheduled to run once or twice each day,
+and is responsible for syncing things up: sponsors
+and users in the insiders team, in case something went wrong.
