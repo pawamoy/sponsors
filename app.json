@@ -3,15 +3,14 @@
   "description": "Receive sponsors webhook, trigger GHA pipeline.",
   "image": "heroku/python",
   "repository": "https://github.com/pawamoy/sponsors",
-  "keywords": ["python", "fastapi"],
+  "keywords": [
+    "python",
+    "fastapi"
+  ],
   "addons": [],
   "env": {
-    "DEPLOY_KEY": {
-      "description": "The deploy key.",
-      "generator": "secret"
-    },
-    "WEBHOOK_SECRET": {
-      "description": "The webhook secret.",
+    "GITHUB_TOKEN": {
+      "description": "The GitHub token to trigger the workflow.",
       "generator": "secret"
     }
   },

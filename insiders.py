@@ -1,202 +1,223 @@
+from __future__ import annotations
+
 from datetime import datetime
 import os
 import json
-from pathlib import Path
+from dataclasses import dataclass
 
 import httpx
 
+# permissions: admin:org and read:user
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
-SPONSORED_ACCOUNT = os.getenv("SPONSORED_ACCOUNT", "pawamoy")
-MIN_AMOUNT = os.getenv("MIN_AMOUNT", 10)
-GITHUB_ORG = os.getenv("GITHUB_ORG", "mkdocstrings")
-INSIDERS_TEAM = os.getenv("INSIDERS_TEAM", "insiders")
-PRIVILEGED_USERS = frozenset({
-    "pawamoy",
-    "oprypin",
-    "squidfunk",
-    # "facelessuser",
-    # "waylan",
-})
+SPONSORED_ACCOUNT = "pawamoy"
+MIN_AMOUNT = 10
+ORG_TEAMS = [
+    ("mkdocstrings", "insiders"),
+    ("pawamoy-insiders", "insiders"),
+]
+PRIVILEGED_USERS = frozenset(
+    {
+        "pawamoy",
+        "oprypin",
+        "squidfunk",
+        # "facelessuser",
+        # "waylan",
+    }
+)
+
+GRAPHQL_SPONSORS = """
+query {
+    viewer {
+        sponsorshipsAsMaintainer(
+        first: 100,
+        after: %s
+        includePrivate: true,
+        orderBy: {
+            field: CREATED_AT,
+            direction: DESC
+        }
+        ) {
+        pageInfo {
+            hasNextPage
+            endCursor
+        }
+        nodes {
+            createdAt,
+            isOneTimePayment,
+            privacyLevel,
+            sponsorEntity {
+            ...on Actor {
+                __typename,
+                login,
+                avatarUrl,
+                url
+            }
+            },
+            tier {
+            monthlyPriceInDollars
+            }
+        }
+        }
+    }
+}
+"""
 
 
-def grant(user: str):
-    with httpx.Client() as client:
-        response = client.put(
-            f"https://api.github.com/orgs/{GITHUB_ORG}/teams/{INSIDERS_TEAM}/memberships/{user}",
-            headers={"Authorization": f"Bearer {GITHUB_TOKEN}"}
-        )
-        try:
-            response.raise_for_status()
-        except httpx.HTTPError as error:
-            print(f"Couldn't add @{user} to {INSIDERS_TEAM} team: {error}")
-        else:
-            print(f"@{user} added to {INSIDERS_TEAM} team")
+@dataclass
+class Account:
+    name: str
+    image: str
+    url: str
+    org: bool
+
+    def as_dict(self) -> dict:
+        return {
+            "name": self.name,
+            "image": self.image,
+            "url": self.url,
+            "org": self.org,
+        }
 
 
-def revoke(user: str):
-    with httpx.Client() as client:
-        response = client.delete(
-            f"https://api.github.com/orgs/{GITHUB_ORG}/teams/{INSIDERS_TEAM}/memberships/{user}",
-            headers={"Authorization": f"Bearer {GITHUB_TOKEN}"}
-        )
-        try:
-            response.raise_for_status()
-        except httpx.HTTPError as error:
-            print(f"Couldn't remove @{user} from {INSIDERS_TEAM} team: {error}")
-        else:
-            print(f"@{user} removed from {INSIDERS_TEAM} team")
+@dataclass
+class Sponsor:
+    account: Account
+    private: bool
+    created: datetime
+    amount: int
 
 
-def handle_event(event):
-    # event payload examples:
-    # https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#sponsorship
-    action = event["action"]
-    sponsor = event["sponsorship"]["sponsor"]
-    tier = event["sponsorship"]["tier"]
-
-    # credits to Martin Donath @squidfunk
-    if sponsor["type"] == "User" and not tier["is_one_time"]:
-        # Sponsorship
-        if action == "created":
-            if tier["monthly_price_in_dollars"] >= MIN_AMOUNT:
-                grant(sponsor["login"])
-
-        # Sponsorship cancellation
-        elif action == "cancelled":
-            if tier["monthly_price_in_dollars"] >= MIN_AMOUNT:
-                revoke(sponsor["login"])
-
-        # Sponsorship tier change
-        elif action == "tier_changed":
-            previous = event["changes"]["tiers"]["from"]
-            if tier["monthly_price_in_dollars"] >= MIN_AMOUNT:
-                if previous["monthly_price_in_dollars"] < MIN_AMOUNT:
-                    grant(sponsor["login"])
-            else:
-                revoke(sponsor["login"])
-
-
-def get_sponsors():
-    subscriptions = []
+def get_sponsors() -> list[Sponsor]:
+    sponsors = []
     with httpx.Client(base_url="https://api.github.com") as client:
         cursor = "null"
         while True:
-            payload = {
-                "query": """
-                    query {
-                    viewer {
-                        sponsorshipsAsMaintainer(
-                        first: 100,
-                        after: %s
-                        includePrivate: true,
-                        orderBy: {
-                            field: CREATED_AT,
-                            direction: DESC
-                        }
-                        ) {
-                        pageInfo {
-                            hasNextPage
-                            endCursor
-                        }
-                        nodes {
-                            createdAt,
-                            isOneTimePayment,
-                            privacyLevel,
-                            sponsorEntity {
-                            ...on Actor {
-                                __typename,
-                                login,
-                                avatarUrl,
-                                url
-                            }
-                            },
-                            tier {
-                            monthlyPriceInDollars
-                            }
-                        }
-                        }
-                    }
-                    }
-                """ % cursor
-            }
-            response = client.post(f"https://api.github.com/graphql", json=payload, headers={"Authorization": f"Bearer {GITHUB_TOKEN}"})
+            # Get sponsors data
+            payload = {"query": GRAPHQL_SPONSORS % cursor}
+            response = client.post(
+                f"https://api.github.com/graphql",
+                json=payload,
+                headers={"Authorization": f"Bearer {GITHUB_TOKEN}"},
+            )
             response.raise_for_status()
 
-            # Post-process subscription data
+            # Post-process sponsors data
             data = response.json()["data"]
             for item in data["viewer"]["sponsorshipsAsMaintainer"]["nodes"]:
                 if item["isOneTimePayment"]:
                     continue
 
-                # Determine insider type
-                insider_type = "user" if item["sponsorEntity"]["__typename"] == "User" else "organization"
+                # Determine account
+                account = Account(
+                    name=item["sponsorEntity"]["login"],
+                    image=item["sponsorEntity"]["avatarUrl"],
+                    url=item["sponsorEntity"]["url"],
+                    org=item["sponsorEntity"]["__typename"].lower() == "organization",
+                )
 
-                # Determine insider data
-                user = {
-                    "type": insider_type,
-                    "name": item["sponsorEntity"]["login"],
-                    "image": item["sponsorEntity"]["avatarUrl"],
-                    "url": item["sponsorEntity"]["url"]
-                }
-
-                # Add subscription
-                subscriptions.append({
-                    "user": user,
-                    "visibility": item["privacyLevel"].lower(),
-                    "created": datetime.strptime(item["createdAt"], "%Y-%m-%dT%H:%M:%SZ"),
-                    "amount": item["tier"]["monthlyPriceInDollars"]
-                })
+                # Add sponsor
+                sponsors.append(
+                    Sponsor(
+                        account=account,
+                        private=item["privacyLevel"].lower() == "private",
+                        created=datetime.strptime(item["createdAt"], "%Y-%m-%dT%H:%M:%SZ"),
+                        amount=item["tier"]["monthlyPriceInDollars"],
+                    )
+                )
 
             # Check for next page
-            if (data["viewer"]["sponsorshipsAsMaintainer"]["pageInfo"]["hasNextPage"]):
+            if data["viewer"]["sponsorshipsAsMaintainer"]["pageInfo"]["hasNextPage"]:
                 cursor = f'"{data["viewer"]["sponsorshipsAsMaintainer"]["pageInfo"]["endCursor"]}"'
             else:
                 break
 
-    return subscriptions
+    return sponsors
 
 
-def get_insiders() -> list[str]:
+def get_members(org: str, team: str) -> set[str]:
+    page = 1
+    members = set()
+    while True:
+        response = httpx.get(
+            f"https://api.github.com/orgs/{org}/teams/{team}/members",
+            params={"per_page": 100, "page": page},
+            headers={"Authorization": f"Bearer {GITHUB_TOKEN}"},
+        )
+        response.raise_for_status()
+        response_data = response.json()
+        members |= {member["login"] for member in response_data}
+        if len(response_data) < 100:
+            break
+        page += 1
+    return {user["login"] for user in response.json()}
+
+
+def get_invited(org: str, team: str) -> set[str]:
     response = httpx.get(
-        f"https://api.github.com/orgs/{GITHUB_ORG}/teams/{INSIDERS_TEAM}/members",
+        f"https://api.github.com/orgs/{org}/teams/{team}/invitations",
         params={"per_page": 100},
-        headers={"Authorization": f"Bearer {GITHUB_TOKEN}"}
+        headers={"Authorization": f"Bearer {GITHUB_TOKEN}"},
     )
     response.raise_for_status()
     return {user["login"] for user in response.json()}
 
 
-def get_invited() -> list[str]:
-    response = httpx.get(
-        f"https://api.github.com/orgs/{GITHUB_ORG}/teams/{INSIDERS_TEAM}/invitations",
-        params={"per_page": 100},
-        headers={"Authorization": f"Bearer {GITHUB_TOKEN}"}
-    )
-    response.raise_for_status()
-    return {user["login"] for user in response.json()}
+def grant(user: str, org: str, team: str):
+    with httpx.Client() as client:
+        response = client.put(
+            f"https://api.github.com/orgs/{org}/teams/{team}/memberships/{user}",
+            headers={"Authorization": f"Bearer {GITHUB_TOKEN}"},
+        )
+        try:
+            response.raise_for_status()
+        except httpx.HTTPError as error:
+            print(f"Couldn't add @{user} to {org}/{team} team: {error}")
+            if response.content:
+                response_body = response.json()
+                print(f"{response_body['message']} See {response_body['documentation_url']}")
+        else:
+            print(f"@{user} added to {org}/{team} team")
 
 
-def main(args=None):
-    if args:
-        payload_path = args[0]
-        event = json.loads(Path(payload_path).read_text())
-        handle_event(event)
-    else:
-        sponsors = get_sponsors()
-        insiders = get_insiders() #| get_invited()
+def revoke(user: str, org: str, team: str):
+    with httpx.Client() as client:
+        response = client.delete(
+            f"https://api.github.com/orgs/{org}/teams/{team}/memberships/{user}",
+            headers={"Authorization": f"Bearer {GITHUB_TOKEN}"},
+        )
+        try:
+            response.raise_for_status()
+        except httpx.HTTPError as error:
+            print(f"Couldn't remove @{user} from {org}/{team} team: {error}")
+            if response.content:
+                response_body = response.json()
+                print(f"{response_body['message']} See {response_body['documentation_url']}")
+        else:
+            print(f"@{user} removed from {org}/{team} team")
 
-        eligible_users = {sponsor["user"]["name"] for sponsor in sponsors if sponsor["amount"] >= MIN_AMOUNT}
-        eligible_users |= PRIVILEGED_USERS
 
+def main():
+    sponsors = get_sponsors()
+    eligible_users = {sponsor.account.name for sponsor in sponsors if sponsor.amount >= MIN_AMOUNT}
+    eligible_users |= PRIVILEGED_USERS
+
+    for org, team in ORG_TEAMS:
+        members = get_members(org, team) | get_invited(org, team)
         # revoke accesses
-        for user in insiders:
+        for user in members:
             if user not in eligible_users:
-                revoke(user)
-
+                revoke(user, org, team)
         # grant accesses
         for user in eligible_users:
-            if user not in insiders:
-                grant(user)
+            if user not in members:
+                grant(user, org, team)
+
+    total = sum(sponsor.amount for sponsor in sponsors)
+    count = len(sponsors)
+    with open("numbers.json", "w") as file:
+        json.dump({"total": total, "count": count}, file)
+    with open("sponsors.json", "w") as file:
+        json.dump([sponsor.account.as_dict() for sponsor in sponsors if not sponsor.private], file, indent=2)
 
 
 if __name__ == "__main__":
