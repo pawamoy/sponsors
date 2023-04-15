@@ -3,10 +3,13 @@ import logging
 import os
 from datetime import datetime, timedelta
 
+import httpx
 from fastapi import FastAPI, Request
 
 GITHUB_API = "https://api.github.com"
-TRIGGER_WORKFLOW = "/repos/pawamoy/sponsors/actions/workflows/insiders/dispatches"
+# permissions: repo
+TRIGGER_WORKFLOW = "/repos/pawamoy/sponsors/dispatches"
+# TRIGGER_WORKFLOW = "/repos/pawamoy/sponsors/actions/workflows/insiders/dispatches"
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 COOLDOWN = timedelta(seconds=60)
 HEADERS = {
@@ -22,8 +25,14 @@ app = FastAPI()
 async def trigger_workflow() -> None:
     logging.info("Triggering workflow")
     async with httpx.AsyncClient(base_url=GITHUB_API) as client:
-        response = await client.post(TRIGGER_WORKFLOW, headers=HEADERS)
+        response = await client.post(TRIGGER_WORKFLOW, headers=HEADERS, json={"event_type": "webhook-trigger"})
+    try:
         response.raise_for_status()
+    except httpx.HTTPError as error:
+        print(f"Couldn't trigger workflow: {error}")
+        if response.content:
+            response_body = response.json()
+            print(f"{response_body['message']} See {response_body['documentation_url']}")
 
 
 class Workflow:
