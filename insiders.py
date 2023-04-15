@@ -8,7 +8,7 @@ from datetime import datetime
 import httpx
 
 # permissions: admin:org and read:user
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+GITHUB_TOKEN = os.getenv("TOKEN")
 SPONSORED_ACCOUNT = "pawamoy"
 MIN_AMOUNT = 10
 ORG_TEAMS = [
