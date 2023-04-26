@@ -12,7 +12,6 @@ GITHUB_TOKEN = os.getenv("TOKEN")
 SPONSORED_ACCOUNT = "pawamoy"
 MIN_AMOUNT = 10
 ORG_TEAMS = [
-    ("mkdocstrings", "insiders"),
     ("pawamoy-insiders", "insiders"),
 ]
 PRIVILEGED_USERS = frozenset(
