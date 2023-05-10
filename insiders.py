@@ -21,6 +21,7 @@ PRIVILEGED_USERS = frozenset(
         "squidfunk",
         # "facelessuser",
         # "waylan",
+        "tusharsadhwani",
     }
 )
 
