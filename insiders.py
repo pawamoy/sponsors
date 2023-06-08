@@ -11,7 +11,7 @@ import httpx
 GITHUB_TOKEN = os.getenv("TOKEN")
 SPONSORED_ACCOUNT = "pawamoy"
 MIN_AMOUNT = 10
-ORG_TEAMS = [
+INSIDERS_TEAMS = [
     ("pawamoy-insiders", "insiders"),
 ]
 PRIVILEGED_USERS = frozenset(
@@ -24,6 +24,8 @@ PRIVILEGED_USERS = frozenset(
         "tusharsadhwani",
     }
 )
+ORG_USERS = {
+}
 
 GRAPHQL_SPONSORS = """
 query {
@@ -198,10 +200,14 @@ def revoke(user: str, org: str, team: str):
 
 def main():
     sponsors = get_sponsors()
-    eligible_users = {sponsor.account.name for sponsor in sponsors if sponsor.amount >= MIN_AMOUNT}
-    eligible_users |= PRIVILEGED_USERS
 
-    for org, team in ORG_TEAMS:
+    eligible_orgs = {sponsor.account.name for sponsor in sponsors if sponsor.account.org and sponsor.amount >= MIN_AMOUNT}
+    eligible_users = {sponsor.account.name for sponsor in sponsors if not sponsor.account.org and sponsor.amount >= MIN_AMOUNT}
+    eligible_users |= PRIVILEGED_USERS
+    for eligible_org in eligible_orgs:
+        eligible_users |= ORG_USERS.get(eligible_org, set())
+
+    for org, team in INSIDERS_TEAMS:
         members = get_members(org, team) | get_invited(org, team)
         # revoke accesses
         for user in members:
