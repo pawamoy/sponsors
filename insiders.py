@@ -25,6 +25,7 @@ PRIVILEGED_USERS = frozenset(
     }
 )
 ORG_USERS = {
+    "kolenaIO": {"kolenabot"},
 }
 
 GRAPHQL_SPONSORS = """
