@@ -1,5 +1,11 @@
 [
   {
+    "name": "kolenaIO",
+    "image": "https://avatars.githubusercontent.com/u/77010818?v=4",
+    "url": "https://github.com/kolenaIO",
+    "org": true
+  },
+  {
     "name": "mqje",
     "image": "https://avatars.githubusercontent.com/u/26004843?v=4",
     "url": "https://github.com/mqje",
@@ -10,6 +16,12 @@
     "image": "https://avatars.githubusercontent.com/u/360986?v=4",
     "url": "https://github.com/cmarqu",
     "org": false
+  },
+  {
+    "name": "pydantic",
+    "image": "https://avatars.githubusercontent.com/u/110818415?v=4",
+    "url": "https://github.com/pydantic",
+    "org": true
   },
   {
     "name": "tiangolo",
