@@ -19,13 +19,14 @@ PRIVILEGED_USERS = frozenset(
         "pawamoy",
         "oprypin",
         "squidfunk",
-        # "facelessuser",
-        # "waylan",
+        "facelessuser",
+        "waylan",
         "tusharsadhwani",
     }
 )
 ORG_USERS = {
     "kolenaIO": {"kolenabot"},
+    "NyckelAI": {"beijbom"},
 }
 
 GRAPHQL_SPONSORS = """
