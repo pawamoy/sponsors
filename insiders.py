@@ -27,6 +27,7 @@ PRIVILEGED_USERS = frozenset(
 ORG_USERS = {
     "kolenaIO": {"kolenabot"},
     "NyckelAI": {"beijbom"},
+    "okio-ai": {"faradox"},
 }
 
 GRAPHQL_SPONSORS = """
