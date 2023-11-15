@@ -22,6 +22,8 @@ PRIVILEGED_USERS = frozenset(
         "facelessuser",
         "waylan",
         "tusharsadhwani",
+        # TODO: Remove once they cloned repositories.
+        "polloelastico",
     }
 )
 ORG_USERS = {
