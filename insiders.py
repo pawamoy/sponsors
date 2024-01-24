@@ -28,6 +28,7 @@ ORG_USERS = {
     "kolenaIO": {"kolenabot"},
     "NyckelAI": {"beijbom"},
     "okio-ai": {"faradox", "aaronabebe", "samim23"},
+    "pydantic": {"samuelcolvin", "Kludex"},
 }
 
 GRAPHQL_SPONSORS = """
