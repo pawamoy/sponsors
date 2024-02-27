@@ -27,6 +27,7 @@ PRIVILEGED_USERS = frozenset(
 ORG_USERS = {
     "kolenaIO": {"kolenabot"},
     "livingbio": {"lucemia"},
+    "NemetschekAllplan": {"bmarciniec"},
     "NyckelAI": {"beijbom"},
     "okio-ai": {"faradox", "aaronabebe", "samim23"},
     "pydantic": {"samuelcolvin", "Kludex"},
