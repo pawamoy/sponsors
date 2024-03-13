@@ -2,7 +2,7 @@
     {
         "name": "FastAPI",
         "url": "https://fastapi.tiangolo.com/",
-        "image": "https://github.com/tiangolo/fastapi/blob/master/docs/en/docs/img/logo-margin/logo-teal.png",
+        "image": "https://raw.githubusercontent.com/tiangolo/fastapi/blob/master/docs/en/docs/img/logo-margin/logo-teal.png",
         "imageHeight": 120
     }
 ]
