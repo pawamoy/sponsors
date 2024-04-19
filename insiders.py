@@ -22,6 +22,7 @@ PRIVILEGED_USERS = frozenset(
         "facelessuser",
         "waylan",
         "tusharsadhwani",
+        "bswck",
     }
 )
 ORG_USERS = {
