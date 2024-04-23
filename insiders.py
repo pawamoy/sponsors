@@ -31,7 +31,7 @@ ORG_USERS = {
     "NemetschekAllplan": {"bmarciniec"},
     "NyckelAI": {"beijbom"},
     "okio-ai": {"faradox", "aaronabebe", "samim23"},
-    "pydantic": {"samuelcolvin", "Kludex"},
+    "pydantic": {"samuelcolvin", "Kludex", "sydney-runkle"},
 }
 
 GRAPHQL_SPONSORS = """
