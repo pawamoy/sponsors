@@ -23,6 +23,7 @@ PRIVILEGED_USERS = frozenset(
         "waylan",
         "tusharsadhwani",
         "bswck",
+        "birkjernstrom",  # Temporary, while waiting for integration with Polar.sh.
     }
 )
 ORG_USERS = {
