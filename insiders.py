@@ -16,14 +16,14 @@ INSIDERS_TEAMS = [
 ]
 PRIVILEGED_USERS = frozenset(
     {
-        "pawamoy",
-        "oprypin",
-        "squidfunk",
-        "facelessuser",
-        "waylan",
-        "tusharsadhwani",
-        "bswck",
+        "pawamoy",  # Myself.
+        "oprypin",  # For their contributions to the MkDocs ecosystem.
+        "squidfunk",  # For their contributions to the MkDocs ecosystem.
+        "facelessuser",  # For their contributions to the MkDocs ecosystem.
+        "waylan",  # For their contributions to the MkDocs ecosystem.
+        "bswck",  # For their contributions to the Python ecosystem.
         "birkjernstrom",  # Temporary, while waiting for integration with Polar.sh.
+        "ZeroIntensity",  # For their contributions to the C handler.
     }
 )
 ORG_USERS = {
