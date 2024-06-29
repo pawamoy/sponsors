@@ -4,5 +4,11 @@
         "url": "https://fastapi.tiangolo.com/",
         "image": "https://raw.githubusercontent.com/tiangolo/fastapi/master/docs/en/docs/img/logo-margin/logo-teal.png",
         "imageHeight": 200
+    },
+    {
+        "name": "Material for MkDocs",
+        "url": "https://squidfunk.github.io/mkdocs-material/",
+        "image": "https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/.github/assets/logo.svg",
+        "imageHeight": 300
     }
 ]
