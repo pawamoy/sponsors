@@ -17,7 +17,7 @@ INSIDERS_TEAMS = [
 PRIVILEGED_USERS = frozenset(
     {
         "pawamoy",  # Myself.
-        "oprypin",  # For their contributions to the MkDocs ecosystem.
+        # "oprypin",  # For their contributions to the MkDocs ecosystem. Rejected invitation too many times?
         "squidfunk",  # For their contributions to the MkDocs ecosystem.
         "facelessuser",  # For their contributions to the MkDocs ecosystem.
         "waylan",  # For their contributions to the MkDocs ecosystem.
@@ -33,7 +33,11 @@ ORG_USERS = {
     "livingbio": {"lucemia"},
     "NemetschekAllplan": {"bmarciniec"},
     "NyckelAI": {"beijbom"},
-    "okio-ai": {"faradox", "aaronabebe", "samim23"},
+    "okio-ai": {
+        "faradox",
+        "aaronabebe",
+        # "samim23",  # Rejected invitation too many times?
+    },
     "pydantic": {"samuelcolvin", "Kludex", "sydney-runkle"},
 }
 
