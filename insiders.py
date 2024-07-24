@@ -25,6 +25,7 @@ PRIVILEGED_USERS = frozenset(
         "birkjernstrom",  # Temporary, while waiting for integration with Polar.sh.
         "ZeroIntensity",  # For their contributions to the C handler.
         "patrick91",  # Polar sponsor.
+        "darrenburns",  # via willmcgugan.
     }
 )
 ORG_USERS = {
