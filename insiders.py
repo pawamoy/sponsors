@@ -39,6 +39,11 @@ ORG_USERS = {
         # "samim23",  # Rejected invitation too many times?
     },
     "pydantic": {"samuelcolvin", "Kludex", "sydney-runkle"},
+    "activeloopai": {
+        "activeloop-bot",
+        "nvoxland-al",
+        "davidbuniat",
+    }
 }
 
 GRAPHQL_SPONSORS = """
