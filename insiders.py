@@ -43,7 +43,8 @@ ORG_USERS = {
         "activeloop-bot",
         "nvoxland-al",
         "davidbuniat",
-    }
+    },
+    "latentai": {"polloelastico"},
 }
 
 GRAPHQL_SPONSORS = """
