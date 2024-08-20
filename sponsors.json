@@ -1,5 +1,11 @@
 [
   {
+    "name": "roboflow",
+    "image": "https://avatars.githubusercontent.com/u/53104118?v=4",
+    "url": "https://github.com/roboflow",
+    "org": true
+  },
+  {
     "name": "activeloopai",
     "image": "https://avatars.githubusercontent.com/u/34816118?v=4",
     "url": "https://github.com/activeloopai",
