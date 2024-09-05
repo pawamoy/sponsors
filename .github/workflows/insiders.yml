@@ -17,13 +17,17 @@ jobs:
       with:
         python-version: "3.10"
     - name: Setup uv
-      uses: hynek/setup-cached-uv@v2
+      uses: astral-sh/setup-uv@v1
     - name: Install dependencies
       run: uv venv; uv pip install httpx
+
+    # Requires a TOKEN secret with permissions admin:org and read:user in Settings - Secrets - Actions.
     - name: Grant/revoke access
       env:
         TOKEN: ${{ secrets.TOKEN }}
       run: .venv/bin/python insiders.py
+
+    # Requires "Read and write permissions" for workflows in Settings - Actions.
     - name: Commit changes
       run: |
         git config --global user.name "Timothée Mazzucotelli"
