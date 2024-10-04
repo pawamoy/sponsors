@@ -45,6 +45,7 @@ ORG_USERS = {
         "davidbuniat",
     },
     "latentai": {"polloelastico"},
+    "tektronix": {"tek-githubbot-1010"},
 }
 
 GRAPHQL_SPONSORS = """
