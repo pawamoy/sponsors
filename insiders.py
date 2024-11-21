@@ -28,6 +28,12 @@ INCLUDE_USERS = frozenset(
         "darrenburns",  # via willmcgugan.
     }
 )
+EXCLUDE_USERS = frozenset(
+    {
+        "medecau",  # Don't want to join the org.
+    }
+)
+
 ORG_USERS = {
     "kolenaIO": {"kolenabot"},
     "livingbio": {"lucemia"},
@@ -227,6 +233,7 @@ def main():
     eligible_users |= INCLUDE_USERS
     for eligible_org in eligible_orgs:
         eligible_users |= ORG_USERS.get(eligible_org, set())
+    eligible_users -= EXCLUDE_USERS
 
     for org, team in INSIDERS_TEAMS:
         members = get_members(org, team) | get_invited(org, team)
