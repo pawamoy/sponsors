@@ -191,6 +191,16 @@ def get_invited(org: str, team: str) -> set[str]:
     return {user["login"] for user in response.json()}
 
 
+def get_declined(org: str) -> set[str]:
+    response = httpx.get(
+        f"https://api.github.com/orgs/{org}/failed_invitations",
+        params={"per_page": 100},
+        headers={"Authorization": f"Bearer {GITHUB_TOKEN}"},
+    )
+    response.raise_for_status()
+    return {user["login"] for user in response.json()}
+
+
 def grant(user: str, org: str, team: str):
     with httpx.Client() as client:
         response = client.put(
@@ -236,13 +246,14 @@ def main():
     eligible_users -= EXCLUDE_USERS
 
     for org, team in INSIDERS_TEAMS:
+        invitable_users = eligible_users - get_declined(org)
         members = get_members(org, team) | get_invited(org, team)
         # revoke accesses
         for user in members:
             if user not in eligible_users:
                 revoke(user, org, team)
         # grant accesses
-        for user in eligible_users:
+        for user in invitable_users:
             if user not in members:
                 grant(user, org, team)
 
