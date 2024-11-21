@@ -14,7 +14,7 @@ MIN_AMOUNT = 10
 INSIDERS_TEAMS = [
     ("pawamoy-insiders", "insiders"),
 ]
-PRIVILEGED_USERS = frozenset(
+INCLUDE_USERS = frozenset(
     {
         "pawamoy",  # Myself.
         # "oprypin",  # For their contributions to the MkDocs ecosystem. Rejected invitation too many times?
@@ -224,7 +224,7 @@ def main():
 
     eligible_orgs = {sponsor.account.name for sponsor in sponsors if sponsor.account.org and sponsor.amount >= MIN_AMOUNT}
     eligible_users = {sponsor.account.name for sponsor in sponsors if not sponsor.account.org and sponsor.amount >= MIN_AMOUNT}
-    eligible_users |= PRIVILEGED_USERS
+    eligible_users |= INCLUDE_USERS
     for eligible_org in eligible_orgs:
         eligible_users |= ORG_USERS.get(eligible_org, set())
 
