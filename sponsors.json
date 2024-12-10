@@ -192,12 +192,6 @@
     "org": false
   },
   {
-    "name": "pydantic",
-    "image": "https://avatars.githubusercontent.com/u/110818415?v=4",
-    "url": "https://github.com/pydantic",
-    "org": true
-  },
-  {
     "name": "tiangolo",
     "image": "https://avatars.githubusercontent.com/u/1326112?u=cb5d06e73a9e1998141b1641aa88e443c6717651&v=4",
     "url": "https://github.com/tiangolo",
