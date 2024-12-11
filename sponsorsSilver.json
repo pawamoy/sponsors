@@ -15,6 +15,6 @@
         "name": "Pydantic",
         "url": "https://docs.pydantic.dev/latest/",
         "image": "https://raw.githubusercontent.com/pawamoy/website/main/docs/assets/pydantic-logo.png",
-        "imageHeight": 200
+        "imageHeight": 160
     }
 ]
