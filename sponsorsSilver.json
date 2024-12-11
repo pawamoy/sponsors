@@ -10,5 +10,11 @@
         "url": "https://squidfunk.github.io/mkdocs-material/",
         "image": "https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/.github/assets/logo.svg",
         "imageHeight": 300
+    },
+    {
+        "name": "Pydantic",
+        "url": "https://docs.pydantic.dev/latest/",
+        "image": "https://github.com/pawamoy/website/assets/3999221/368ff871-8fae-40c4-9b66-781b66e12cbb",
+        "imageHeight": 180
     }
 ]
