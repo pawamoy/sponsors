@@ -52,6 +52,7 @@ ORG_USERS = {
     },
     "latentai": {"polloelastico"},
     "tektronix": {"tek-githubbot-1010", "nfelt14"},
+    "RapidataAI": {"LinoGiger", "kannwism"},
 }
 
 GRAPHQL_SPONSORS = """
