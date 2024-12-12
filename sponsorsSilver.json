@@ -14,7 +14,7 @@
     {
         "name": "Pydantic",
         "url": "https://docs.pydantic.dev/latest/",
-        "image": "https://raw.githubusercontent.com/pawamoy/website/main/docs/assets/pydantic-logo.png",
+        "image": "https://pydantic.dev/assets/for-external/pydantic_logfire_logo_endorsed_lithium_rgb.svg",
         "imageHeight": 160
     }
 ]
