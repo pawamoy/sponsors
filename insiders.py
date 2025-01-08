@@ -26,6 +26,8 @@ INCLUDE_USERS = frozenset(
         "ZeroIntensity",  # For their contributions to the C handler.
         "patrick91",  # Polar sponsor.
         "darrenburns",  # via willmcgugan.
+        "Kludex",  # Temporary.
+        "sydney-runkle",  # Temporary.
     }
 )
 EXCLUDE_USERS = frozenset(
