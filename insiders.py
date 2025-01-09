@@ -26,8 +26,6 @@ INCLUDE_USERS = frozenset(
         "ZeroIntensity",  # For their contributions to the C handler.
         "patrick91",  # Polar sponsor.
         "darrenburns",  # via willmcgugan.
-        "Kludex",  # Temporary.
-        "sydney-runkle",  # Temporary.
     }
 )
 EXCLUDE_USERS = frozenset(
@@ -46,7 +44,7 @@ ORG_USERS = {
         "aaronabebe",
         # "samim23",  # Rejected invitation too many times?
     },
-    "pydantic": {"samuelcolvin", "Kludex", "sydney-runkle"},
+    "logfire": {"samuelcolvin", "Kludex", "sydney-runkle"},
     "activeloopai": {
         "activeloop-bot",
         "nvoxland-al",
