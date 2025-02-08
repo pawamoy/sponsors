@@ -25,7 +25,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         POLAR_TOKEN: ${{ secrets.PL_TOKEN }}
-      run: .venv/bin/python insiders.py
+      run: .venv/bin/python grant-revoke.py
 
     # Requires "Read and write permissions" for workflows in Settings - Actions.
     - name: Commit changes
