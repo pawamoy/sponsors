@@ -1,270 +1,96 @@
-from __future__ import annotations
-
-import json
 import os
-from dataclasses import dataclass
-from datetime import datetime
+from pathlib import Path
 
-import httpx
+from insiders import GitHub, Polar, update_sponsors_file, update_numbers_file
 
-# permissions: admin:org and read:user
-GITHUB_TOKEN = os.getenv("TOKEN")
-SPONSORED_ACCOUNT = "pawamoy"
+
+GITHUB_TOKEN = os.environ["GITHUB_TOKEN"]
+POLAR_TOKEN = os.environ["POLAR_TOKEN"]
+TEAM = "pawamoy-insiders/insiders"
 MIN_AMOUNT = 10
-INSIDERS_TEAMS = [
-    ("pawamoy-insiders", "insiders"),
-]
-INCLUDE_USERS = frozenset(
-    {
-        "pawamoy",  # Myself.
-        # "oprypin",  # For their contributions to the MkDocs ecosystem. Rejected invitation too many times?
-        "squidfunk",  # For their contributions to the MkDocs ecosystem.
-        "facelessuser",  # For their contributions to the MkDocs ecosystem.
-        "waylan",  # For their contributions to the MkDocs ecosystem.
-        "bswck",  # For their contributions to the Python ecosystem.
-        "birkjernstrom",  # Temporary, while waiting for integration with Polar.sh.
-        "ZeroIntensity",  # For their contributions to the C handler.
-        "patrick91",  # Polar sponsor.
-        "darrenburns",  # via willmcgugan.
-    }
-)
-EXCLUDE_USERS = frozenset(
-    {
-        "medecau",  # Don't want to join the org.
-    }
-)
 
-ORG_USERS = {
-    "kolenaIO": {"kolenabot"},
-    "livingbio": {"lucemia"},
-    "NemetschekAllplan": {"bmarciniec"},
-    "NyckelAI": {"beijbom"},
-    "okio-ai": {
-        "faradox",
-        "aaronabebe",
-        # "samim23",  # Rejected invitation too many times?
+beneficiaries = {
+    "github": {
+        "activeloopai": [
+            {"account": "activeloop-bot", "grant": True},
+            {"account": "nvoxland-al", "grant": True},
+            {"account": "davidbuniat", "grant": True},
+        ],
+        "kolenaIO": [
+            {"account": "kolenabot", "grant": True},
+        ],
+        "livingbio": [
+            {"account": "lucemia", "grant": True},
+        ],
+        "latentai": [
+            {"account": "polloelastico", "grant": True},
+        ],
+        "logfire": [
+            {"account": "samuelcolvin", "grant": True},
+            {"account": "Kludex", "grant": True},
+            {"account": "sydney-runkle", "grant": True},
+        ],
+        "NemetschekAllplan": [
+            {"account": "bmarciniec", "grant": True},
+        ],
+        "NyckelAI": [
+            {"account": "beijbom", "grant": True},
+        ],
+        "okio-ai": [
+            {"account": "faradox", "grant": True},
+            {"account": "aaronabebe", "grant": True},
+        ],
+        "RapidataAI": [
+            {"account": "LinoGiger", "grant": True},
+            {"account": "kannwism", "grant": True},
+        ],
+        "tektronix": [
+            {"account": "tek-githubbot-1010", "grant": True},
+            {"account": "nfelt14", "grant": True},
+        ],
+        "theSymbolSyndicate": [
+            {"account": "Wayonb", "grant": True},
+        ],
+        "willmcgugan": [
+            "&Textualize",
+            {"account": "darrenburns", "grant": True},
+            {"account": "willmcgugan", "grant": True},
+        ],
     },
-    "logfire": {"samuelcolvin", "Kludex", "sydney-runkle"},
-    "activeloopai": {
-        "activeloop-bot",
-        "nvoxland-al",
-        "davidbuniat",
-    },
-    "latentai": {"polloelastico"},
-    "tektronix": {"tek-githubbot-1010", "nfelt14"},
-    "RapidataAI": {"LinoGiger", "kannwism"},
-    "theSymbolSyndicate": {"Wayonb"},
+    "polar": {
+        "patrick91": ["patrick91"],
+        "birkjernstrom": ["birkjernstrom"],
+    }
 }
 
-GRAPHQL_SPONSORS = """
-query {
-    viewer {
-        sponsorshipsAsMaintainer(
-        first: 100,
-        after: %s
-        includePrivate: true,
-        orderBy: {
-            field: CREATED_AT,
-            direction: DESC
-        }
-        ) {
-        pageInfo {
-            hasNextPage
-            endCursor
-        }
-        nodes {
-            createdAt,
-            isOneTimePayment,
-            privacyLevel,
-            sponsorEntity {
-            ...on Actor {
-                __typename,
-                login,
-                avatarUrl,
-                url
-            }
-            },
-            tier {
-            monthlyPriceInDollars
-            }
-        }
-        }
-    }
+include_users = {
+    "pawamoy",  # Myself.
+    "squidfunk",  # For their contributions to the MkDocs ecosystem.
+    "facelessuser",  # For their contributions to the MkDocs ecosystem.
+    "waylan",  # For their contributions to the MkDocs ecosystem.
+    "bswck",  # For their contributions to the Python ecosystem.
+    "ZeroIntensity",  # For their contributions to the C handler.
 }
-"""
 
-
-@dataclass
-class Account:
-    name: str
-    image: str
-    url: str
-    org: bool
-
-    def as_dict(self) -> dict:
-        return {
-            "name": self.name,
-            "image": self.image,
-            "url": self.url,
-            "org": self.org,
-        }
-
-
-@dataclass
-class Sponsor:
-    account: Account
-    private: bool
-    created: datetime
-    amount: int
-
-
-def get_sponsors() -> list[Sponsor]:
-    sponsors = []
-    with httpx.Client(base_url="https://api.github.com") as client:
-        cursor = "null"
-        while True:
-            # Get sponsors data
-            payload = {"query": GRAPHQL_SPONSORS % cursor}
-            response = client.post(
-                f"https://api.github.com/graphql",
-                json=payload,
-                headers={"Authorization": f"Bearer {GITHUB_TOKEN}"},
-            )
-            response.raise_for_status()
-
-            # Post-process sponsors data
-            data = response.json()["data"]
-            for item in data["viewer"]["sponsorshipsAsMaintainer"]["nodes"]:
-                if item["isOneTimePayment"]:
-                    continue
-
-                # Determine account
-                account = Account(
-                    name=item["sponsorEntity"]["login"],
-                    image=item["sponsorEntity"]["avatarUrl"],
-                    url=item["sponsorEntity"]["url"],
-                    org=item["sponsorEntity"]["__typename"].lower() == "organization",
-                )
-
-                # Add sponsor
-                sponsors.append(
-                    Sponsor(
-                        account=account,
-                        private=item["privacyLevel"].lower() == "private",
-                        created=datetime.strptime(item["createdAt"], "%Y-%m-%dT%H:%M:%SZ"),
-                        amount=item["tier"]["monthlyPriceInDollars"],
-                    )
-                )
-
-            # Check for next page
-            if data["viewer"]["sponsorshipsAsMaintainer"]["pageInfo"]["hasNextPage"]:
-                cursor = f'"{data["viewer"]["sponsorshipsAsMaintainer"]["pageInfo"]["endCursor"]}"'
-            else:
-                break
-
-    return sponsors
-
-
-def get_members(org: str, team: str) -> set[str]:
-    page = 1
-    members = set()
-    while True:
-        response = httpx.get(
-            f"https://api.github.com/orgs/{org}/teams/{team}/members",
-            params={"per_page": 100, "page": page},
-            headers={"Authorization": f"Bearer {GITHUB_TOKEN}"},
-        )
-        response.raise_for_status()
-        response_data = response.json()
-        members |= {member["login"] for member in response_data}
-        if len(response_data) < 100:
-            break
-        page += 1
-    return {user["login"] for user in response.json()}
-
-
-def get_invited(org: str, team: str) -> set[str]:
-    response = httpx.get(
-        f"https://api.github.com/orgs/{org}/teams/{team}/invitations",
-        params={"per_page": 100},
-        headers={"Authorization": f"Bearer {GITHUB_TOKEN}"},
-    )
-    response.raise_for_status()
-    return {user["login"] for user in response.json()}
-
-
-def get_declined(org: str) -> set[str]:
-    response = httpx.get(
-        f"https://api.github.com/orgs/{org}/failed_invitations",
-        params={"per_page": 100},
-        headers={"Authorization": f"Bearer {GITHUB_TOKEN}"},
-    )
-    response.raise_for_status()
-    return {user["login"] for user in response.json()}
-
-
-def grant(user: str, org: str, team: str):
-    with httpx.Client() as client:
-        response = client.put(
-            f"https://api.github.com/orgs/{org}/teams/{team}/memberships/{user}",
-            headers={"Authorization": f"Bearer {GITHUB_TOKEN}"},
-        )
-        try:
-            response.raise_for_status()
-        except httpx.HTTPError as error:
-            print(f"Couldn't add @{user} to {org}/{team} team: {error}")
-            if response.content:
-                response_body = response.json()
-                print(f"{response_body['message']} See {response_body['documentation_url']}")
-        else:
-            print(f"@{user} added to {org}/{team} team")
-
-
-def revoke(user: str, org: str, team: str):
-    with httpx.Client() as client:
-        response = client.delete(
-            f"https://api.github.com/orgs/{org}/teams/{team}/memberships/{user}",
-            headers={"Authorization": f"Bearer {GITHUB_TOKEN}"},
-        )
-        try:
-            response.raise_for_status()
-        except httpx.HTTPError as error:
-            print(f"Couldn't remove @{user} from {org}/{team} team: {error}")
-            if response.content:
-                response_body = response.json()
-                print(f"{response_body['message']} See {response_body['documentation_url']}")
-        else:
-            print(f"@{user} removed from {org}/{team} team")
+exclude_users = {
+    "medecau",  # Doesn't want to join the team.
+}
 
 
 def main():
-    sponsors = get_sponsors()
+    with GitHub(GITHUB_TOKEN) as github, Polar(POLAR_TOKEN) as polar:
+        sponsors = github.get_sponsors() + polar.get_sponsors()
+        github.consolidate_beneficiaries(sponsors, beneficiaries)  # type: ignore[arg-type]
+        github.sync_team(
+            TEAM,
+            sponsors=sponsors,
+            min_amount=MIN_AMOUNT,
+            include_users=include_users,
+            exclude_users=exclude_users,
+        )
 
-    eligible_orgs = {sponsor.account.name for sponsor in sponsors if sponsor.account.org and sponsor.amount >= MIN_AMOUNT}
-    eligible_users = {sponsor.account.name for sponsor in sponsors if not sponsor.account.org and sponsor.amount >= MIN_AMOUNT}
-    eligible_users |= INCLUDE_USERS
-    for eligible_org in eligible_orgs:
-        eligible_users |= ORG_USERS.get(eligible_org, set())
-    eligible_users -= EXCLUDE_USERS
-
-    for org, team in INSIDERS_TEAMS:
-        invitable_users = eligible_users - get_declined(org)
-        members = get_members(org, team) | get_invited(org, team)
-        # revoke accesses
-        for user in members:
-            if user not in eligible_users:
-                revoke(user, org, team)
-        # grant accesses
-        for user in invitable_users:
-            if user not in members:
-                grant(user, org, team)
-
-    total = sum(sponsor.amount for sponsor in sponsors)
-    count = len(sponsors)
-    with open("numbers.json", "w") as file:
-        json.dump({"total": total, "count": count}, file)
-    with open("sponsors.json", "w") as file:
-        json.dump([sponsor.account.as_dict() for sponsor in sponsors if not sponsor.private], file, indent=2)
+    update_numbers_file(sponsors.sponsorships, filepath=Path("numbers.json"))
+    update_sponsors_file(sponsors.sponsorships, filepath=Path("sponsors.json"), exclude_private=True)
 
 
 if __name__ == "__main__":
