@@ -1,5 +1,29 @@
 [
   {
+    "name": "loopj",
+    "image": "https://avatars.githubusercontent.com/u/104009?v=4",
+    "url": "https://github.com/loopj",
+    "org": false
+  },
+  {
+    "name": "Alphadelta14",
+    "image": "https://avatars.githubusercontent.com/u/480845?v=4",
+    "url": "https://github.com/Alphadelta14",
+    "org": false
+  },
+  {
+    "name": "ChargeStorm",
+    "image": "https://avatars.githubusercontent.com/u/26000165?v=4",
+    "url": "https://github.com/ChargeStorm",
+    "org": true
+  },
+  {
+    "name": "blakeNaccarato",
+    "image": "https://avatars.githubusercontent.com/u/20692450?u=bb919218be30cfa994514f4cf39bb2f7cf952df4&v=4",
+    "url": "https://github.com/blakeNaccarato",
+    "org": false
+  },
+  {
     "name": "theSymbolSyndicate",
     "image": "https://avatars.githubusercontent.com/u/111542255?v=4",
     "url": "https://github.com/theSymbolSyndicate",
@@ -36,21 +60,9 @@
     "org": false
   },
   {
-    "name": "medecau",
-    "image": "https://avatars.githubusercontent.com/u/59870?u=f9341c95adaba780828162fd4c7442357ecfcefa&v=4",
-    "url": "https://github.com/medecau",
-    "org": false
-  },
-  {
     "name": "cmclaughlin",
     "image": "https://avatars.githubusercontent.com/u/1061109?u=ddf6eec0edd2d11c980f8c3aa96e3d044d4e0468&v=4",
     "url": "https://github.com/cmclaughlin",
-    "org": false
-  },
-  {
-    "name": "Investigamer",
-    "image": "https://avatars.githubusercontent.com/u/92750180?u=3fbd2ac0f30e2e27f36a02c82bc9b70594db5741&v=4",
-    "url": "https://github.com/Investigamer",
     "org": false
   },
   {
@@ -90,27 +102,9 @@
     "org": false
   },
   {
-    "name": "willmcgugan",
-    "image": "https://avatars.githubusercontent.com/u/554369?u=e143171e64130f4530df0bfcd9d564bf5e88df68&v=4",
-    "url": "https://github.com/willmcgugan",
-    "org": false
-  },
-  {
-    "name": "wu-vincent",
-    "image": "https://avatars.githubusercontent.com/u/8433134?u=6c5797ac4f8b471c720bdc5567ead61a29c4f4f6&v=4",
-    "url": "https://github.com/wu-vincent",
-    "org": false
-  },
-  {
-    "name": "HartmanAnalytics",
+    "name": "EricJayHartman",
     "image": "https://avatars.githubusercontent.com/u/9259499?u=7e58cc7ec0cd3e85b27aec33656aa0f6612706dd&v=4",
-    "url": "https://github.com/HartmanAnalytics",
-    "org": false
-  },
-  {
-    "name": "ipseitas",
-    "image": "https://avatars.githubusercontent.com/u/171422617?u=3d2af8f411cd195660140279be305d22b7980243&v=4",
-    "url": "https://github.com/ipseitas",
+    "url": "https://github.com/EricJayHartman",
     "org": false
   },
   {
@@ -156,9 +150,9 @@
     "org": false
   },
   {
-    "name": "MikoShoiDev",
-    "image": "https://avatars.githubusercontent.com/u/33802596?v=4",
-    "url": "https://github.com/MikoShoiDev",
+    "name": "OdinManiac",
+    "image": "https://avatars.githubusercontent.com/u/22727172?u=36ab20970f7f52ae8e7eb67b7fcf491fee01ac22&v=4",
+    "url": "https://github.com/OdinManiac",
     "org": false
   },
   {
@@ -178,12 +172,6 @@
     "image": "https://avatars.githubusercontent.com/u/21331242?v=4",
     "url": "https://github.com/laenan8466",
     "org": false
-  },
-  {
-    "name": "okio-ai",
-    "image": "https://avatars.githubusercontent.com/u/126168518?v=4",
-    "url": "https://github.com/okio-ai",
-    "org": true
   },
   {
     "name": "trevorWieland",
@@ -255,12 +243,6 @@
     "name": "ofek",
     "image": "https://avatars.githubusercontent.com/u/9677399?u=386c330f212ce467ce7119d9615c75d0e9b9f1ce&v=4",
     "url": "https://github.com/ofek",
-    "org": false
-  },
-  {
-    "name": "patrick91",
-    "image": "https://www.gravatar.com/avatar/8f5cbe66feebf99e01a6a4662923365b83e09c39a304d22b05b8273a2de68d4b?d=blank",
-    "url": "https://polar.sh/patrick91",
     "org": false
   },
   {
