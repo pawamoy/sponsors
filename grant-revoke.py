@@ -70,6 +70,7 @@ include_users = {
     "waylan",  # For their contributions to the MkDocs ecosystem.
     "bswck",  # For their contributions to the Python ecosystem.
     "ZeroIntensity",  # For their contributions to the C handler.
+    "alexvoss",  # Work-related.
 }
 
 exclude_users = {
