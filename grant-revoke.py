@@ -28,7 +28,6 @@ beneficiaries = {
         "logfire": [
             {"account": "samuelcolvin", "grant": True},
             {"account": "Kludex", "grant": True},
-            {"account": "sydney-runkle", "grant": True},
         ],
         "NemetschekAllplan": [
             {"account": "bmarciniec", "grant": True},
