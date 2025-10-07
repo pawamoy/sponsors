@@ -32,6 +32,9 @@ beneficiaries = {
         "NemetschekAllplan": [
             {"account": "bmarciniec", "grant": True},
         ],
+        "Nixtla": [
+            {"account": "deven367", "grant": True},
+        ],
         "NyckelAI": [
             {"account": "beijbom", "grant": True},
         ],
