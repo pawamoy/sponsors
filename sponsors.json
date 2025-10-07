@@ -1,11 +1,5 @@
 [
   {
-    "name": "loopj",
-    "image": "https://avatars.githubusercontent.com/u/104009?v=4",
-    "url": "https://github.com/loopj",
-    "org": false
-  },
-  {
     "name": "Alphadelta14",
     "image": "https://avatars.githubusercontent.com/u/480845?v=4",
     "url": "https://github.com/Alphadelta14",
@@ -40,12 +34,6 @@
     "image": "https://avatars.githubusercontent.com/u/54740855?v=4",
     "url": "https://github.com/logfire",
     "org": true
-  },
-  {
-    "name": "KC3ZVD",
-    "image": "https://avatars.githubusercontent.com/u/182820472?v=4",
-    "url": "https://github.com/KC3ZVD",
-    "org": false
   },
   {
     "name": "RapidataAI",
@@ -105,12 +93,6 @@
     "name": "EricJayHartman",
     "image": "https://avatars.githubusercontent.com/u/9259499?u=7e58cc7ec0cd3e85b27aec33656aa0f6612706dd&v=4",
     "url": "https://github.com/EricJayHartman",
-    "org": false
-  },
-  {
-    "name": "tomchristie",
-    "image": "https://avatars.githubusercontent.com/u/647359?u=afcdb67ec485900d025d18270a115085e3f0f909&v=4",
-    "url": "https://github.com/tomchristie",
     "org": false
   },
   {
@@ -228,6 +210,12 @@
     "org": false
   },
   {
+    "name": "tlambert03",
+    "image": "https://avatars.githubusercontent.com/u/1609449?u=922abf0524b47739b37095e553c99488814b05db&v=4",
+    "url": "https://github.com/tlambert03",
+    "org": false
+  },
+  {
     "name": "squidfunk",
     "image": "https://avatars.githubusercontent.com/u/932156?u=0253600adee0250b25f0cca6681da25e839197b3&v=4",
     "url": "https://github.com/squidfunk",
@@ -247,7 +235,7 @@
   },
   {
     "name": "birkjernstrom",
-    "image": "https://www.gravatar.com/avatar/45048e0491e2a6bdf2d9abb901baa3d747567b713c49fe58ce3043f8734d5fa3?d=blank",
+    "image": "https://www.gravatar.com/avatar/45048e0491e2a6bdf2d9abb901baa3d747567b713c49fe58ce3043f8734d5fa3?d=404",
     "url": "https://polar.sh/birkjernstrom",
     "org": false
   }
