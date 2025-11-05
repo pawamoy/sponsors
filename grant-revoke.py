@@ -16,6 +16,9 @@ beneficiaries = {
             {"account": "nvoxland-al", "grant": True},
             {"account": "davidbuniat", "grant": True},
         ],
+        "CuspAI": [
+            {"account": "pimdh", "grant": True},
+        ],
         "kolenaIO": [
             {"account": "kolenabot", "grant": True},
         ],
