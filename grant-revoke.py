@@ -74,7 +74,6 @@ include_users = {
     "squidfunk",  # For their contributions to the MkDocs ecosystem.
     "facelessuser",  # For their contributions to the MkDocs ecosystem.
     "waylan",  # For their contributions to the MkDocs ecosystem.
-    "bswck",  # For their contributions to the Python ecosystem.
     "ZeroIntensity",  # For their contributions to the C handler.
     "alexvoss",  # Work-related.
 }
